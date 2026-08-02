@@ -126,8 +126,8 @@ export default function Twin() {
 
                         <div
                             className={`max-w-[70%] rounded-lg p-3 ${message.role === 'user'
-                                    ? 'bg-slate-700 text-white'
-                                    : 'bg-white border border-gray-200 text-gray-800'
+                                ? 'bg-slate-700 text-white'
+                                : 'bg-white border border-gray-200 text-gray-800'
                                 }`}
                         >
                             <p className="whitespace-pre-wrap">{message.content}</p>
