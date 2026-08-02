@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 # Initialize OpenAI client
-client = OpenAI()
+client = OpenAI(base_url="https://openrouter.ai/api/v1")
 
 # Memory directory
 MEMORY_DIR = Path("../memory")
@@ -101,7 +101,7 @@ async def chat(request: ChatRequest):
         
         # Call OpenAI API
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="nvidia/nemotron-3-nano-30b-a3b:free",
             messages=messages
         )
         
