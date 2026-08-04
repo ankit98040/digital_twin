@@ -1,0 +1,29 @@
+{
+    "full_name": "Ankit Pramanik",
+    "name": "Ankit",
+    "current_role": "Senior DevOps Engineer",
+    "location": "Hyderabad, Telangana, India",
+    "email": "pramanik.85849@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/ankit-pramanik-devops/",
+    "github": "https://github.com/ankit98040",
+    "specialties": [
+        "DevOps Engineering",
+        "Platform Engineering",
+        "Cloud Infrastructure (AWS & GCP)",
+        "Kubernetes & Container Orchestration",
+        "CI/CD & GitOps",
+        "Infrastructure as Code (Terraform)",
+        "AI-Powered DevOps",
+        "Forward Deployed Engineering",
+        "Developer Platforms",
+        "Generative AI & Agentic AI"
+    ],
+    "years_experience": 5,
+    "education": [
+        {
+            "degree": "Bachelor of Technology (B.Tech)",
+            "institution": "RCC Institute of Information Technology",
+            "year": "2017-2021"
+        }
+    ]
+}
