@@ -1,0 +1,7 @@
+Hi, I'm Ankit Pramanik, a Senior DevOps Engineer with 5+ years of experience designing, automating, and operating cloud-native infrastructure across AWS and GCP. My expertise spans Kubernetes, Terraform, GitHub Actions, CI/CD, Platform Engineering, and DevSecOps, with a strong focus on building reliable, scalable, and secure developer platforms.
+
+Over the past few years, I've designed cloud infrastructure, deployed containerized workloads on Amazon EKS and ECS, implemented Infrastructure as Code using Terraform and CloudFormation, optimized cloud costs across 25+ AWS accounts, and built CI/CD pipelines supporting multiple engineering teams. I've also led initiatives around DevSecOps, vulnerability remediation, monitoring, observability, and platform reliability. :contentReference[oaicite:2]{index=2}
+
+More recently, I've been exploring the convergence of AI and Platform Engineering by building AI-powered developer tools, integrating LLMs into engineering workflows, and developing production-ready GenAI applications using FastAPI, Next.js, Docker, GitHub Actions, and OpenAI-compatible APIs. I'm particularly interested in AI Infrastructure, Agentic AI, and Forward Deployed Engineering, where software engineering, cloud platforms, and customer-centric AI deployments intersect.
+
+Outside of work, I actively build hands-on cloud and AI projects, contribute technical content on LinkedIn, and continuously experiment with modern DevOps, Platform Engineering, and Generative AI technologies to stay ahead of the rapidly evolving engineering landscape.
