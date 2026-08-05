@@ -139,3 +139,4 @@ memory/*
 lambda-deployment.zip
 lambda-package/
 /backend/__pycache__
+/backend/__pycache__
