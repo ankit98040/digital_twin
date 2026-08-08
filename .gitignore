@@ -140,3 +140,5 @@ lambda-deployment.zip
 lambda-package/
 /backend/__pycache__
 /backend/__pycache__
+backend/__pycache__/server.cpython-314.pyc
+.DS_Store
