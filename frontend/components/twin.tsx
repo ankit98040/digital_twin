@@ -34,10 +34,6 @@ const QUICK_CHIPS = [
   'DevOps Career',
 ];
 
-const API_ENDPOINT =
-  process.env.NEXT_PUBLIC_API_URL ||
-  'https://pe8k5dtsy4.execute-api.us-east-1.amazonaws.com/chat';
-
 export default function Twin() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -90,7 +86,7 @@ export default function Twin() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(API_ENDPOINT, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
