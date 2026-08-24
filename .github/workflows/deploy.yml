@@ -31,20 +31,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Validate Secrets
-        run: |
-          if [ -z "${{ secrets.AWS_ROLE_ARN }}" ]; then
-            echo "❌ ERROR: AWS_ROLE_ARN secret is missing in GitHub Repository Secrets!"
-            echo "Please set AWS_ROLE_ARN under Repository Settings -> Secrets and variables -> Actions"
-            exit 1
-          fi
-          echo "✅ AWS_ROLE_ARN is configured."
-
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.DEFAULT_AWS_REGION || 'us-east-1' }}
+          role-to-assume: arn:aws:iam::191990713407:role/github-actions-twin-deploy
+          aws-region: us-east-1
           role-session-name: GitHubActions-Deploy-${{ github.run_id }}
 
       - name: Set up Python 3.12
@@ -71,13 +62,13 @@ jobs:
 
       - name: Run Deployment Script
         run: |
-          export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
-          export DEFAULT_AWS_REGION=${{ secrets.DEFAULT_AWS_REGION || 'us-east-1' }}
+          export AWS_ACCOUNT_ID="191990713407"
+          export DEFAULT_AWS_REGION="us-east-1"
           
           chmod +x scripts/deploy.sh
           ./scripts/deploy.sh ${{ github.event.inputs.environment || 'dev' }}
         env:
-          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+          AWS_ROLE_ARN: arn:aws:iam::191990713407:role/github-actions-twin-deploy
 
       - name: Get Deployment Outputs
         id: deploy_outputs
@@ -92,7 +83,7 @@ jobs:
       - name: Invalidate CloudFront Cache
         run: |
           FRONTEND_BUCKET="${{ steps.deploy_outputs.outputs.frontend_bucket }}"
-          AWS_REGION="${{ secrets.DEFAULT_AWS_REGION || 'us-east-1' }}"
+          AWS_REGION="us-east-1"
           
           if [ "$FRONTEND_BUCKET" != "N/A" ] && [ -n "$FRONTEND_BUCKET" ]; then
             DISTRIBUTION_ID=$(aws cloudfront list-distributions \
