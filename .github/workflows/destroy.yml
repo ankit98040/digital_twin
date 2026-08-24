@@ -19,6 +19,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
+
 jobs:
   destroy:
     name: Destroy Environment
@@ -47,6 +50,7 @@ jobs:
           role-to-assume: arn:aws:iam::191990713407:role/github-actions-twin-deploy
           aws-region: us-east-1
           role-session-name: GitHubActions-Destroy-${{ github.run_id }}
+          audience: sts.amazonaws.com
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
