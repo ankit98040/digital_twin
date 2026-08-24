@@ -47,15 +47,8 @@ jobs:
           else
             echo "✅ ID Token received from GitHub."
             echo "=== 2. Decoded JWT Claims ==="
-            python3 -c "
-import sys, json, base64
-token = '$ID_TOKEN'
-parts = token.split('.')
-payload = parts[1] + '=' * ((4 - len(parts[1]) % 4) % 4)
-data = json.loads(base64.urlsafe_b64decode(payload).decode('utf-8'))
-for k in ['iss', 'aud', 'sub', 'repository', 'repository_owner', 'ref', 'environment']:
-    print(f'  {k}: {data.get(k)}')
-"
+            echo "$ID_TOKEN" | cut -d'.' -f2 | base64 -d 2>/dev/null | jq '{iss, aud, sub, repository, repository_owner, ref, environment}' || true
+            
             echo "=== 3. Direct AWS CLI STS Test ==="
             aws sts assume-role-with-web-identity \
               --role-arn "arn:aws:iam::191990713407:role/github-actions-twin-deploy" \
