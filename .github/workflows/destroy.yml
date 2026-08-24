@@ -1,71 +1,79 @@
 name: Destroy Environment
 
 on:
-    workflow_dispatch:
-        inputs:
-            environment:
-                description: "Environment to destroy"
-                required: true
-                type: choice
-                options:
-                    - dev
-                    - test
-                    - prod
-            confirm:
-                description: "Type the environment name to confirm destruction"
-                required: true
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to destroy"
+        required: true
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+      confirm:
+        description: "Type the environment name to confirm destruction"
+        required: true
 
 permissions:
-    id-token: write
-    contents: read
+  id-token: write
+  contents: read
 
 jobs:
-    destroy:
-        name: Destroy ${{ github.event.inputs.environment }}
-        runs-on: ubuntu-latest
-        environment: ${{ github.event.inputs.environment }}
-        permissions:
-            id-token: write
-            contents: read
+  destroy:
+    name: Destroy Environment
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
-        steps:
-            - name: Verify confirmation
-              run: |
-                  if [ "${{ github.event.inputs.confirm }}" != "${{ github.event.inputs.environment }}" ]; then
-                    echo "❌ Confirmation does not match environment name!"
-                    echo "You entered: '${{ github.event.inputs.confirm }}'"
-                    echo "Expected: '${{ github.event.inputs.environment }}'"
-                    exit 1
-                  fi
-                  echo "✅ Destruction confirmed for ${{ github.event.inputs.environment }}"
+    steps:
+      - name: Verify Destruction Confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "${{ github.event.inputs.environment }}" ]; then
+            echo "❌ Confirmation failed!"
+            echo "You entered: '${{ github.event.inputs.confirm }}'"
+            echo "Expected: '${{ github.event.inputs.environment }}'"
+            exit 1
+          fi
+          echo "✅ Destruction confirmed for environment: ${{ github.event.inputs.environment }}"
 
-            - name: Checkout code
-              uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-            - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v4
-              with:
-                  role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-                  role-session-name: github-actions-destroy
-                  aws-region: ${{ secrets.DEFAULT_AWS_REGION }}
+      - name: Validate Secrets
+        run: |
+          if [ -z "${{ secrets.AWS_ROLE_ARN }}" ]; then
+            echo "❌ ERROR: AWS_ROLE_ARN secret is missing in GitHub Repository Secrets!"
+            echo "Please set AWS_ROLE_ARN under Repository Settings -> Secrets and variables -> Actions"
+            exit 1
+          fi
+          echo "✅ AWS_ROLE_ARN is configured."
 
-            - name: Setup Terraform
-              uses: hashicorp/setup-terraform@v3
-              with:
-                  terraform_wrapper: false # Important: disable wrapper to get raw outputs
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.DEFAULT_AWS_REGION || 'us-east-1' }}
+          role-session-name: GitHubActions-Destroy-${{ github.run_id }}
 
-            - name: Run Destroy Script
-              run: |
-                  # Set environment variables for the script
-                  export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
-                  export DEFAULT_AWS_REGION=${{ secrets.DEFAULT_AWS_REGION }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
-                  # Make script executable and run it
-                  chmod +x scripts/destroy.sh
-                  ./scripts/destroy.sh ${{ github.event.inputs.environment }}
-              env:
-                  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      - name: Run Destroy Script
+        run: |
+          export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
+          export DEFAULT_AWS_REGION=${{ secrets.DEFAULT_AWS_REGION || 'us-east-1' }}
+          
+          chmod +x scripts/destroy.sh
+          ./scripts/destroy.sh ${{ github.event.inputs.environment }}
+        env:
+          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
-            - name: Destruction Complete
-              run: |
-                  echo "✅ Environment ${{ github.event.inputs.environment }} has been destroyed!"
+      - name: Destruction Summary
+        run: |
+          echo "=========================================="
+          echo "✅ Environment ${{ github.event.inputs.environment }} destroyed successfully!"
+          echo "=========================================="
