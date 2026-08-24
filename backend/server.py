@@ -104,39 +104,50 @@ def save_conversation(session_id: str, messages: List[Dict]):
 
 
 def call_bedrock(conversation: List[Dict], user_message: str) -> str:
-    """Call AWS Bedrock with conversation history"""
+    """Call AWS Bedrock with conversation history and native system prompt"""
+    system_text = prompt()
     
-    # Build messages in Bedrock format
+    # Build alternating messages in Bedrock format
     messages = []
     
-    # Add system prompt as first user message
-    # Or there's a better way to do this - pass in system=[{"text": prompt()}] to the converse call below
-    messages.append({
-        "role": "user", 
-        "content": [{"text": f"System: {prompt()}"}]
-    })
-    
-    # Add conversation history (limit to last 25 exchanges)
-    for msg in conversation[-50:]:
+    # Process conversation history (last 20 turns)
+    for msg in conversation[-20:]:
+        role = "assistant" if msg.get("role") in ["assistant", "ai"] else "user"
+        content = msg.get("content", "").strip()
+        if not content:
+            continue
+            
+        if messages and messages[-1]["role"] == role:
+            # Merge consecutive messages with same role to keep strict turn alternation
+            messages[-1]["content"][0]["text"] += f"\n\n{content}"
+        else:
+            messages.append({
+                "role": role,
+                "content": [{"text": content}]
+            })
+            
+    # Ensure message sequence starts with a user message
+    if messages and messages[0]["role"] != "user":
+        messages.pop(0)
+        
+    # Append current user message
+    if messages and messages[-1]["role"] == "user":
+        messages[-1]["content"][0]["text"] += f"\n\n{user_message}"
+    else:
         messages.append({
-            "role": msg["role"],
-            "content": [{"text": msg["content"]}]
+            "role": "user",
+            "content": [{"text": user_message}]
         })
     
-    # Add current user message
-    messages.append({
-        "role": "user",
-        "content": [{"text": user_message}]
-    })
-    
     try:
-        # Call Bedrock using the converse API
+        # Call Bedrock using native system parameter and converse API
         response = bedrock_client.converse(
             modelId=BEDROCK_MODEL_ID,
+            system=[{"text": system_text}],
             messages=messages,
             inferenceConfig={
-                "maxTokens": 2000,
-                "temperature": 0.7,
+                "maxTokens": 2048,
+                "temperature": 0.4,
                 "topP": 0.9
             }
         )
