@@ -50,8 +50,9 @@ resource "aws_iam_role" "github_actions" {
           }
           StringLike = {
             "token.actions.githubusercontent.com:sub" = [
-              "repo:ankit98040/*:*",
-              "repo:ankit98040/*"
+              "repo:ankit98040*:*",
+              "repo:ankit98040*",
+              "repo:ankit98040@59945244/*"
             ]
           }
         }
