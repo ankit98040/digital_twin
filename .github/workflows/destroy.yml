@@ -23,7 +23,6 @@ jobs:
     destroy:
         name: Destroy ${{ github.event.inputs.environment }}
         runs-on: ubuntu-latest
-        environment: ${{ github.event.inputs.environment }}
         permissions:
             id-token: write
             contents: read
