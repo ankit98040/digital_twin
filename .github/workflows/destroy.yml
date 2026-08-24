@@ -19,56 +19,50 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
-
 jobs:
   destroy:
-    name: Destroy Environment
+    name: Destroy ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
-      - name: Verify Destruction Confirmation
+      - name: Verify confirmation
         run: |
           if [ "${{ github.event.inputs.confirm }}" != "${{ github.event.inputs.environment }}" ]; then
-            echo "❌ Confirmation failed!"
+            echo "❌ Confirmation does not match environment name!"
             echo "You entered: '${{ github.event.inputs.confirm }}'"
             echo "Expected: '${{ github.event.inputs.environment }}'"
             exit 1
           fi
-          echo "✅ Destruction confirmed for environment: ${{ github.event.inputs.environment }}"
+          echo "✅ Destruction confirmed for ${{ github.event.inputs.environment }}"
 
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials via OIDC
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::191990713407:role/github-actions-twin-deploy
-          aws-region: us-east-1
-          role-session-name: GitHubActions-Destroy-${{ github.run_id }}
-          audience: sts.amazonaws.com
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: github-actions-destroy
+          aws-region: ${{ secrets.DEFAULT_AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_wrapper: false
+          terraform_wrapper: false # Important: disable wrapper to get raw outputs
 
       - name: Run Destroy Script
         run: |
-          export AWS_ACCOUNT_ID="191990713407"
-          export DEFAULT_AWS_REGION="us-east-1"
-          
+          # Set environment variables for the script
+          export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
+          export DEFAULT_AWS_REGION=${{ secrets.DEFAULT_AWS_REGION }}
+
+          # Make script executable and run it
           chmod +x scripts/destroy.sh
           ./scripts/destroy.sh ${{ github.event.inputs.environment }}
         env:
-          AWS_ROLE_ARN: arn:aws:iam::191990713407:role/github-actions-twin-deploy
+          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
 
-      - name: Destruction Summary
+      - name: Destruction Complete
         run: |
-          echo "=========================================="
-          echo "✅ Environment ${{ github.event.inputs.environment }} destroyed successfully!"
-          echo "=========================================="
+          echo "✅ Environment ${{ github.event.inputs.environment }} has been destroyed!"
