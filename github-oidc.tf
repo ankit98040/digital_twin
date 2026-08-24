@@ -3,7 +3,7 @@
 
 variable "github_repository" {
   description = "GitHub repository in format 'owner/repo'"
-#  default = "ankit98040/digital_twin"
+  default     = "ankit98040/digital_twin"
   type        = string
 }
 
@@ -22,13 +22,14 @@ resource "aws_iam_openid_connect_provider" "github" {
   # This thumbprint is from GitHub's documentation
   # Verify current value at: https://github.blog/changelog/2023-06-27-github-actions-update-on-oidc-integration-with-aws/
   thumbprint_list = [
-    "1b511abead59c6ce207077c0bf0e0043b1382612"
+    "6938fd4d98bab03faadb97b34396831e3780aea1",
+    "1c3dee6f425096a56886e39818816c14ec7ef47f"
   ]
 }
 
 # IAM Role for GitHub Actions
 resource "aws_iam_role" "github_actions" {
-  name = "github-actions-twin-deploy-v2"
+  name = "github-actions-twin-deploy"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -44,10 +45,7 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = [
-              "repo:${var.github_repository}:*",
-              "repo:ankit98040/*"
-            ]
+            "token.actions.githubusercontent.com:sub" = "repo:ankit98040/digital_twin:*"
           }
         }
       }
