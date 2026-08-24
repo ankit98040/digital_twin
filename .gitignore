@@ -177,3 +177,14 @@ uv.lock
 .idea/
 *.swp
 .DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+
+# AWS
+.aws/
