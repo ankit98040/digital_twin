@@ -19,6 +19,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
+
 jobs:
   deploy:
     name: Deploy Digital Twin
@@ -37,6 +40,7 @@ jobs:
           role-to-assume: arn:aws:iam::191990713407:role/github-actions-twin-deploy
           aws-region: us-east-1
           role-session-name: GitHubActions-Deploy-${{ github.run_id }}
+          audience: sts.amazonaws.com
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -53,10 +57,10 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
