@@ -46,7 +46,6 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.DEFAULT_AWS_REGION || 'us-east-1' }}
           role-session-name: GitHubActions-Deploy-${{ github.run_id }}
-          audience: sts.amazonaws.com
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
