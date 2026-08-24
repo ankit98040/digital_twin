@@ -28,7 +28,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 
 # IAM Role for GitHub Actions
 resource "aws_iam_role" "github_actions" {
-  name = "github-actions-twin-deploy"
+  name = "github-actions-twin-deploy-v2"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
