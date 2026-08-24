@@ -45,7 +45,11 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:ankit98040/digital_twin:*"
+            "token.actions.githubusercontent.com:sub" = [
+              "repo:ankit98040/Gen-AI-Agenti-AI-production:*",
+              "repo:ankit98040/digital_twin:*",
+              "repo:ankit98040/*"
+            ]
           }
         }
       }
