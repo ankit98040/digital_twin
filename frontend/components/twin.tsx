@@ -32,6 +32,7 @@ const QUICK_CHIPS = [
   'Kubernetes & EKS',
   'Bedrock Architecture',
   'DevOps Career',
+  'Agentic AI & AgentGuard',
 ];
 
 export default function Twin() {
@@ -42,9 +43,31 @@ export default function Twin() {
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [copiedSession, setCopiedSession] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Check if avatar exists (supports avatar.png or avatar.jpeg)
+  useEffect(() => {
+    const checkAvatar = async () => {
+      try {
+        const pngRes = await fetch('/avatar.png', { method: 'HEAD' });
+        if (pngRes.ok) {
+          setAvatarUrl('/avatar.png');
+          return;
+        }
+        const jpgRes = await fetch('/avatar.jpeg', { method: 'HEAD' });
+        if (jpgRes.ok) {
+          setAvatarUrl('/avatar.jpeg');
+          return;
+        }
+      } catch {
+        setAvatarUrl(null);
+      }
+    };
+    checkAvatar();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -86,7 +109,8 @@ export default function Twin() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/chat`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -211,10 +235,18 @@ export default function Twin() {
         {/* Chat Top Header */}
         <div className="px-5 py-3.5 bg-slate-900/90 border-b border-slate-800/80 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 p-0.5 flex items-center justify-center shadow-md">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Bot className="w-5 h-5 text-indigo-400" />
-              </div>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 p-0.5 flex items-center justify-center shadow-md overflow-hidden">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Ankit Pramanik"
+                  className="w-full h-full object-cover rounded-[10px]"
+                />
+              ) : (
+                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                  <Bot className="w-5 h-5 text-indigo-400" />
+                </div>
+              )}
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -241,7 +273,7 @@ export default function Twin() {
             {sessionId && (
               <button
                 onClick={handleCopySessionId}
-                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 text-slate-400 hover:text-slate-200 text-xs transition-colors"
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 text-slate-400 hover:text-slate-200 text-xs transition-colors cursor-pointer"
                 title="Copy Session ID"
               >
                 {copiedSession ? (
@@ -259,7 +291,7 @@ export default function Twin() {
               <>
                 <button
                   onClick={handleExportChat}
-                  className="p-1.5 rounded-lg bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="p-1.5 rounded-lg bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                   title="Export chat history (JSON)"
                 >
                   <Download className="w-4 h-4" />
@@ -267,7 +299,7 @@ export default function Twin() {
 
                 <button
                   onClick={handleResetChat}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800/70 hover:bg-rose-950/40 border border-slate-700/60 hover:border-rose-500/40 text-slate-400 hover:text-rose-300 text-xs transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800/70 hover:bg-rose-950/40 border border-slate-700/60 hover:border-rose-500/40 text-slate-400 hover:text-rose-300 text-xs transition-colors cursor-pointer"
                   title="Clear conversation"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -284,10 +316,18 @@ export default function Twin() {
             /* Empty State Hero */
             <div className="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto py-8">
               <div className="relative mb-5">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5 shadow-xl animate-pulse-subtle flex items-center justify-center">
-                  <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                    <Sparkles className="w-8 h-8 text-indigo-400" />
-                  </div>
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5 shadow-xl animate-pulse-subtle flex items-center justify-center overflow-hidden">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Ankit Pramanik"
+                      className="w-full h-full object-cover rounded-[14px]"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                      <Sparkles className="w-9 h-9 text-indigo-400" />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -295,7 +335,7 @@ export default function Twin() {
                 Talk to Ankit&apos;s AI Digital Twin
               </h2>
               <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-                I can answer questions about Ankit&apos;s 5+ years of experience in DevOps, Kubernetes, Terraform, AWS Bedrock, and Platform Engineering.
+                I can answer questions about Ankit&apos;s 5+ years of experience in DevOps, Kubernetes, Terraform, AWS Bedrock, Agentic AI, and Platform Engineering.
               </p>
 
               {/* Action Cards */}
@@ -319,17 +359,17 @@ export default function Twin() {
 
                 <button
                   onClick={() =>
-                    handleSendMessage('How did you build this Digital Twin architecture?')
+                    handleSendMessage('Tell me about your Agentic AI and AWS Bedrock projects')
                   }
                   className="p-3.5 rounded-xl bg-slate-900/60 hover:bg-indigo-950/40 border border-slate-800/80 hover:border-indigo-500/40 transition-all text-xs text-slate-300 hover:text-white flex items-start gap-2.5 group cursor-pointer"
                 >
                   <Cpu className="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0" />
                   <div>
                     <span className="font-semibold text-slate-200 block mb-0.5">
-                      AI Architecture
+                      Agentic AI & Bedrock
                     </span>
                     <span className="text-slate-400 line-clamp-1">
-                      AWS Bedrock & S3 Long-term Memory
+                      AgentGuard, Task Looper & S3 Memory
                     </span>
                   </div>
                 </button>
@@ -375,33 +415,38 @@ export default function Twin() {
               return (
                 <div
                   key={message.id}
-                  className={`flex gap-3 sm:gap-4 ${
-                    isUser ? 'justify-end' : 'justify-start'
-                  } group`}
+                  className={`flex gap-3 sm:gap-4 ${isUser ? 'justify-end' : 'justify-start'
+                    } group`}
                 >
                   {/* Assistant Avatar */}
                   {!isUser && (
                     <div className="flex-shrink-0 mt-0.5">
-                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-0.5 shadow-md flex items-center justify-center">
-                        <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                          <Bot className="w-4 h-4 text-indigo-400" />
-                        </div>
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-0.5 shadow-md flex items-center justify-center overflow-hidden">
+                        {avatarUrl ? (
+                          <img
+                            src={avatarUrl}
+                            alt="Ankit"
+                            className="w-full h-full object-cover rounded-[10px]"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                            <Bot className="w-4 h-4 text-indigo-400" />
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
 
                   {/* Message Bubble Container */}
                   <div
-                    className={`max-w-[85%] sm:max-w-[78%] flex flex-col ${
-                      isUser ? 'items-end' : 'items-start'
-                    }`}
+                    className={`max-w-[85%] sm:max-w-[78%] flex flex-col ${isUser ? 'items-end' : 'items-start'
+                      }`}
                   >
                     <div
-                      className={`rounded-2xl px-4 py-3 shadow-lg relative ${
-                        isUser
+                      className={`rounded-2xl px-4 py-3 shadow-lg relative ${isUser
                           ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-tr-sm'
                           : 'bg-slate-900/80 border border-slate-800 text-slate-200 rounded-tl-sm'
-                      }`}
+                        }`}
                     >
                       {isUser ? (
                         <p className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -414,9 +459,8 @@ export default function Twin() {
 
                     {/* Message Metadata & Toolbar */}
                     <div
-                      className={`flex items-center gap-2 mt-1 px-1 text-[11px] text-slate-500 ${
-                        isUser ? 'justify-end' : 'justify-start'
-                      }`}
+                      className={`flex items-center gap-2 mt-1 px-1 text-[11px] text-slate-500 ${isUser ? 'justify-end' : 'justify-start'
+                        }`}
                     >
                       <span>
                         {message.timestamp.toLocaleTimeString([], {
@@ -430,7 +474,7 @@ export default function Twin() {
                           onClick={() =>
                             handleCopyMessage(message.id, message.content)
                           }
-                          className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:text-slate-300 text-slate-500 flex items-center gap-1"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:text-slate-300 text-slate-500 flex items-center gap-1 cursor-pointer"
                           title="Copy response"
                         >
                           {copiedMsgId === message.id ? (
@@ -465,10 +509,18 @@ export default function Twin() {
           {isLoading && (
             <div className="flex gap-3 sm:gap-4 justify-start">
               <div className="flex-shrink-0 mt-0.5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-0.5 shadow-md flex items-center justify-center animate-pulse">
-                  <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-indigo-400" />
-                  </div>
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-0.5 shadow-md flex items-center justify-center animate-pulse overflow-hidden">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Ankit"
+                      className="w-full h-full object-cover rounded-[10px]"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                      <Bot className="w-4 h-4 text-indigo-400" />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="bg-slate-900/80 border border-slate-800 rounded-2xl rounded-tl-sm px-4 py-3.5 shadow-lg flex items-center gap-3">
@@ -487,7 +539,7 @@ export default function Twin() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Quick Suggestion Chips (when conversation is active) */}
+        {/* Quick Suggestion Chips */}
         {messages.length > 0 && (
           <div className="px-4 py-1.5 bg-slate-950/60 border-t border-slate-800/60 flex items-center gap-2 overflow-x-auto scrollbar-none">
             <span className="text-[10px] uppercase font-semibold text-slate-400 flex items-center gap-1 flex-shrink-0">
