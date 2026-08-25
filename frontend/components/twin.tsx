@@ -52,9 +52,9 @@ export default function Twin() {
   useEffect(() => {
     const checkAvatar = async () => {
       try {
-        const pngRes = await fetch('/avatar.png', { method: 'HEAD' });
+        const pngRes = await fetch('/avatar.jpeg', { method: 'HEAD' });
         if (pngRes.ok) {
-          setAvatarUrl('/avatar.png');
+          setAvatarUrl('/avatar.jpeg');
           return;
         }
         const jpgRes = await fetch('/avatar.jpeg', { method: 'HEAD' });
@@ -444,8 +444,8 @@ export default function Twin() {
                   >
                     <div
                       className={`rounded-2xl px-4 py-3 shadow-lg relative ${isUser
-                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-tr-sm'
-                          : 'bg-slate-900/80 border border-slate-800 text-slate-200 rounded-tl-sm'
+                        ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-tr-sm'
+                        : 'bg-slate-900/80 border border-slate-800 text-slate-200 rounded-tl-sm'
                         }`}
                     >
                       {isUser ? (
