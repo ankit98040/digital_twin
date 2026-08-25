@@ -415,9 +415,8 @@ export default function Twin() {
               return (
                 <div
                   key={message.id}
-                  className={`flex gap-3 sm:gap-4 ${
-                    isUser ? 'justify-end' : 'justify-start'
-                  } group`}
+                  className={`flex gap-3 sm:gap-4 ${isUser ? 'justify-end' : 'justify-start'
+                    } group`}
                 >
                   {/* Assistant Avatar */}
                   {!isUser && (
@@ -440,16 +439,14 @@ export default function Twin() {
 
                   {/* Message Bubble Container */}
                   <div
-                    className={`max-w-[85%] sm:max-w-[78%] flex flex-col ${
-                      isUser ? 'items-end' : 'items-start'
-                    }`}
+                    className={`max-w-[85%] sm:max-w-[78%] flex flex-col ${isUser ? 'items-end' : 'items-start'
+                      }`}
                   >
                     <div
-                      className={`rounded-2xl px-4 py-3 shadow-lg relative ${
-                        isUser
-                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-tr-sm'
-                          : 'bg-slate-900/80 border border-slate-800 text-slate-200 rounded-tl-sm'
-                      }`}
+                      className={`rounded-2xl px-4 py-3 shadow-lg relative ${isUser
+                        ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-tr-sm'
+                        : 'bg-slate-900/80 border border-slate-800 text-slate-200 rounded-tl-sm'
+                        }`}
                     >
                       {isUser ? (
                         <p className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -462,9 +459,8 @@ export default function Twin() {
 
                     {/* Message Metadata & Toolbar */}
                     <div
-                      className={`flex items-center gap-2 mt-1 px-1 text-[11px] text-slate-500 ${
-                        isUser ? 'justify-end' : 'justify-start'
-                      }`}
+                      className={`flex items-center gap-2 mt-1 px-1 text-[11px] text-slate-500 ${isUser ? 'justify-end' : 'justify-start'
+                        }`}
                     >
                       <span>
                         {message.timestamp.toLocaleTimeString([], {
