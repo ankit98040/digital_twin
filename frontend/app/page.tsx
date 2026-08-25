@@ -47,10 +47,12 @@ export default function Home() {
       <header className="relative z-10 border-b border-white/5 bg-slate-950/70 backdrop-blur-xl px-4 sm:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-bold text-xs text-white">
-                AP
-              </div>
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-indigo-500/20 overflow-hidden">
+              <img
+                src="/avatar.jpeg"
+                alt="Ankit Pramanik"
+                className="w-full h-full object-cover rounded-[10px]"
+              />
             </div>
             <div>
               <div className="flex items-center gap-1.5">

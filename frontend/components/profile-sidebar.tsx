@@ -94,6 +94,8 @@ const SKILL_TAGS = [
 ];
 
 export default function ProfileSidebar({ onSelectPrompt }: ProfileSidebarProps) {
+  const [avatarUrl, setAvatarUrl] = React.useState<string | null>('/avatar.jpeg');
+
   return (
     <aside className="w-full lg:w-[360px] flex-shrink-0 flex flex-col gap-4">
       {/* Profile Card */}
@@ -104,10 +106,19 @@ export default function ProfileSidebar({ onSelectPrompt }: ProfileSidebarProps) 
         {/* Profile Header */}
         <div className="flex items-start gap-3.5 mb-4">
           <div className="relative">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 p-0.5 shadow-lg flex items-center justify-center">
-              <div className="w-full h-full rounded-[14px] bg-slate-950 flex items-center justify-center text-white font-bold text-xl tracking-wider">
-                AP
-              </div>
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-cyan-500 p-0.5 shadow-lg flex items-center justify-center overflow-hidden">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Ankit Pramanik"
+                  className="w-full h-full object-cover rounded-[14px]"
+                  onError={() => setAvatarUrl(null)}
+                />
+              ) : (
+                <div className="w-full h-full rounded-[14px] bg-slate-950 flex items-center justify-center text-white font-bold text-xl tracking-wider">
+                  AP
+                </div>
+              )}
             </div>
             {/* Live Indicator Badge */}
             <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
